@@ -1,14 +1,27 @@
 import React from 'react'
-import formMaker from '../formMaker'
+import formMaker from '../functions/formMaker'
+import apiCaller from '../functions/apiCaller'
 
-const orderRequestForm = {
-  rfqNum: {
+
+
+const rfqForm = {
+  firstName: {
     label: {
-      attributes: { id: 'someId', className: 'someId-className' },
-      content: 'RFQ#:'
+      attributes: {},
+      content: 'First Name:'
     },
     input: {
-      attributes: { className: 'className' },
+      attributes: {},
+      content: ''
+    }
+  },
+  lastName: {
+    label: {
+      attributes: {},
+      content: 'Last Name:'
+    },
+    input: {
+      attributes: {},
       content: ''
     }
   },
@@ -16,6 +29,16 @@ const orderRequestForm = {
     label: {
       attributes: {},
       content: 'Email:'
+    },
+    input: {
+      attributes: {},
+      content: ''
+    }
+  },
+  phone: {
+    label: {
+      attributes: {},
+      content: 'Phone:'
     },
     input: {
       attributes: {},
@@ -64,25 +87,27 @@ const orderRequestForm = {
   },
   button: {
     button: {
-      attributes: {onClick:((e)=>{
-          e.preventDefault();
-          console.log(`Order button clicked`)
-        })},
+      attributes: {
+        onClick: e => {
+          e.preventDefault()
+          console.log(`Quote button - clicked`)
+          apiCaller({route: `/users`})
+          console.log(`Quote button - fin`)
+        }
+      },
       content: 'Click Me'
-    },
-  },
+    }
+  }
 }
 
+const quoteForm = formMaker(rfqForm)
 
-
-const orderForm = formMaker(orderRequestForm)
-
-export default function Order () {
+export default function RFQ () {
   return (
     <div>
-      Place and Order
+      Request a quote
       <hr />
-      {orderForm}
+      {quoteForm}
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
-import Home from './Home'
-import RFQ from './RFQ'
-import Order from './Order'
+import Home from './pages/Home'
+import RFQ from './pages/RFQ'
+import Order from './pages/Order'
 
 export default function MainRouter () {
   return (
