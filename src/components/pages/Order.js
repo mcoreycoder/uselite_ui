@@ -69,7 +69,7 @@ const orderRequestForm = {
       attributes: {onClick: e => {
         e.preventDefault()
         console.log(`Quote button - clicked`)
-        apiCaller({route: `/products`})
+        apiCaller({route: `/products`, method:`GET`})
         console.log(`Quote button - fin`)
       }},
       content: 'Click Me'

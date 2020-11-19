@@ -35,6 +35,9 @@ const inputStyle = {
 //   flexDirection: 'row-reverse',
 }
 
+//*formMaker() takes in an object with first level properties being the sections, 
+//* next section being the elements for that section, 
+//* followed by element attributes and content */
 export default function formMaker (formInput) {
   let getKeys = objInput =>
     Object.keys(objInput).map(key => {

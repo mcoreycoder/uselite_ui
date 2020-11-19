@@ -2,7 +2,39 @@ import React from 'react'
 import formMaker from '../functions/formMaker'
 import apiCaller from '../functions/apiCaller'
 
+// let myUserbody = {
+//   "billing_address": [],
+//   "shipping_address": [],
+//   "quotes": [],
+//   "orders": [],
+//   "email": "test@test.com",
+//   "fName": "test",
+//   "lName": "4",
+//   "password": "test", // throughing error: "UnhandledPromiseRejectionWarning: Error: data and salt arguments required" routes/users.js:54:35
+//   "userName": "mcoreycoder"
+// }
 
+let myProductBody = {
+  "pricing": "",
+  "options": {
+      "colors": [],
+      "sizes": [],
+      "otherOptions": []
+  },
+  "shippingDIMs": "",
+  "gsa": {
+      "modNumber": []
+  },
+  "productLinks": [],
+  "distributors": [],
+  "colors": [],
+  "sizes": [],
+  "otherSeletionOptions": [],
+  "brand": "Arc'teryx",
+  "productTitle": `Shirt ${7}`,
+  "productLink": "",
+  "gsaListed": false,
+}
 
 const rfqForm = {
   firstName: {
@@ -91,7 +123,8 @@ const rfqForm = {
         onClick: e => {
           e.preventDefault()
           console.log(`Quote button - clicked`)
-          apiCaller({route: `/users`})
+          // apiCaller({route: `/users/signup`, method:`POST`, body:mybody}) // throughing error see above
+          apiCaller({route: `/products`, method:`POST`, body: myProductBody})
           console.log(`Quote button - fin`)
         }
       },

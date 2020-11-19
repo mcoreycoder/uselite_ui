@@ -142,7 +142,7 @@ const govPage = (
           <div className='image-wrapper'></div>
           <div className='image-wrapper'>
             <img 
-            src='https://lh3.googleusercontent.com/proxy/7O36I1IMj-A7hobORMYn_b-t1oNks-uqy9pDhU8WiYayxFGjdrUHFI4uOHBsYc_qnYgZ_5-V_dwMhyExkh0sD1lvGDnaidJKxmWi5a8RZ0o'
+            src='https://www.pngitem.com/pimgs/m/343-3432172_dun-bradstreet-verified-png-download-dun-and-brad.png'
             alt="duns" 
             style={imgTags}
             />
