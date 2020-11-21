@@ -3,89 +3,71 @@ import formMaker from '../functions/formMaker'
 import apiCaller from '../functions/apiCaller'
 
 let myProductBody = {
-  pricing: '',
-  // options: {
-  //   // colors: [],
-  //   // sizes: [],
-  //   // otherOptions: []
-  // },
-  shippingDIMs: '',
-  // gsa: {
-  //   // modNumber: []
-  // },
-  // productLinks: [],
-  // distributors: [],
-  // colors: [],
-  // sizes: [],
-  // otherSeletionOptions: [],
   brand: "Arc'teryx",
-  productTitle: `Shirt ${7}`,
-  productLink: '',
-  gsaListed: false
-}
-let myOtherProductBody = {
-  brand: "Arc'teryx",
-  sku: "7188",
-  productTitle: "H150 Riggers Belt",
+  sku: '23689',
+  productTitle: 'COLD WX HOODY LT GEN 2',
   pricing: {
-    wholesale: 64.50,
-    map:  103.20,
-    msrp: 129.00
+    wholesale: 0,
+    map: 0,
+    msrp: 422.0
   },
-  countryOfOrigin: "Canada",
+  countryOfOrigin: 'Canada',
   options: {
-    colors: ["Coyote", "Multicam"],
-    sizes: ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"],
+    colors: ['Coyote', 'Multicam'],
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     otherOptions: []
   },
-  unitOfMeasure: "EA",
-  productLinks: [],
+  unitOfMeasure: 'EA',
+  productLinks: [
+    'https://leaf.arcteryx.com/us/en/shop/mens/cold-wx-hoody-lt-gen-2'
+  ],
   shippingDIMs: {
-    weigth: "",
-    lenght: "",
-    width: "",
-    height: ""
+    weigth: '',
+    lenght: '',
+    width: '',
+    height: ''
   },
   gsa: {
     listed: true,
-    price: 102.43 
+    price: 0
   },
-  distributors: ["US Elite"]
+  distributors: ['US Elite']
 }
-// let myOtherProductBody = {
-//   "brand": "Arc'teryx",
-//   "sku": "7188",
-//   "productTitle": "H150 Riggers Belt",
-//   "pricing": {
-//     "wholesale": 64.50,
-//     "map":  103.20,
-//     "msrp": 129.00
-//   },
-//   "countryOfOrigin": "Canada",
-//   "options": {
-//     "colors": ["Coyote", "Multicam"],
-//     "sizes": ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL"],
-//     "otherOptions": []
-//   },
-//   "unitOfMeasure": "EA",
-//   "productLinks": [],
-//   "shippingDIMs": {
-//     "weigth": "",
-//     "lenght": "",
-//     "width": "",
-//     "height": ""
-//   },
-//   "gsa": {
-//     "listed": true,
-//     "price": 102.43 
-//   },
-//   "distributors": []
-// }
+let myOtherProductBody = {
+  brand: "Arc'teryx",
+  sku: '7188',
+  productTitle: 'H150 Riggers Belt',
+  pricing: {
+    wholesale: 64.5,
+    map: 103.2,
+    msrp: 129.0
+  },
+  countryOfOrigin: 'Canada',
+  options: {
+    colors: ['Coyote', 'Multicam'],
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL'],
+    otherOptions: []
+  },
+  unitOfMeasure: 'EA',
+  productLinks: [],
+  shippingDIMs: {
+    weigth: '',
+    lenght: '',
+    width: '',
+    height: ''
+  },
+  gsa: {
+    listed: true,
+    price: 102.43
+  },
+  distributors: ['US Elite']
+}
 
 export default function Products () {
   const [items, setItems] = useState([])
-  const [formItem, setFormItem] = useState(myOtherProductBody)
-  const [editItem, setEditItem] = useState(null)
+  const [formItem, setFormItem] = useState({}) //use myProductBody for quick create
+  const [editItem, setEditItem] = useState(null) // this is just the id for the item selected to be edited
+  const [itemMapped, setItemMapped] = useState({})
 
   let getItems = () => apiCaller({ route: `/products`, method: `GET` })
 
@@ -102,7 +84,7 @@ export default function Products () {
       })
     // console.log(`Updated`)
   }
-  
+
   let handleDelete = (e, id) => {
     e.preventDefault()
     console.log(`Trying to Delete ID: ${id}`)
@@ -117,30 +99,68 @@ export default function Products () {
     console.log(`Deleted`)
   }
 
-  let handleUpdate = (e, id) => {
+  let handleUpdate = (e, id) => { ////update button onChange event handler
     e.preventDefault()
     console.log(`Trying to Update ID: ${id}`)
     apiCaller({ route: `/products/${id}`, method: `PUT`, body: formItem })
       .then(res => res.response)
       .then(res => {
         console.log(`handleUpdate res : `, res)
-        getItems().then(items => {
-          setItems(items)
-        }).then(setEditItem(null))
+        getItems()
+          .then(items => {
+            setItems(items)
+          })
+          .then(() => {
+            setEditItem(null)
+            setItemMapped({})
+          })
       })
     console.log(`Updated`)
+  }
+
+  let onEdit = (e) => { //edit input onChange event handler
+    // console.log(`*** e.target.name *** `, e.target.name)
+    // console.log(`*** e.target.value *** `, e.target.value)
+    const { name, value } = e.target;
+    setFormItem({...formItem, [name]: value})
+  }
+
+  let editItemMap = editItemId => {
+    let itemMap = items.filter(item => item._id === editItemId)[0]
+    console.log(`itemMap`, itemMap)
+    setFormItem(itemMap)
+    let mappingItem = {}
+    for (const property in itemMap) {
+      console.log(`${property}: ${itemMap[property]}`)
+      mappingItem = {
+        ...mappingItem,
+        [property]: {
+          label: {
+            attributes: {},
+            content: `${property}`
+          },
+          input: {
+            attributes: {name: `${property}`, placeholder: `${itemMap[property]}`, onChange: (e)=>onEdit(e) },
+            content: ''
+          }
+        }
+      }
+
+      if (typeof itemMap[property] === 'object') {
+        console.log('*** we have an object', mappingItem)
+      }
+    }
+    return setItemMapped(mappingItem) //comment out
   }
 
   let handleEdit = id => {
     console.log(`setEditItem ${id}`)
     setEditItem(id)
+    // add item edit form
+    editItemMap(id)
   }
 
-  let editItemMap = (editItem)=>{
-    let itemMap = items.filter(item => item._id === editItem)
-    console.log(`itemMap`, itemMap)
-    // itemMap
-  }
+  //form objects
   const editProduct = {
     // mappedInputs: editItemMap(editItem),
     editButton: {
@@ -148,8 +168,8 @@ export default function Products () {
         attributes: {
           onClick: e => {
             e.preventDefault()
-            // handleUpdate(e, editItem)
-            editItemMap(editItem)
+            handleUpdate(e, editItem)
+            // editItemMap(editItem)
           }
         },
         content: 'Update'
@@ -167,6 +187,7 @@ export default function Products () {
       }
     }
   }
+
   const getProducts = {
     getButton: {
       button: {
@@ -197,17 +218,31 @@ export default function Products () {
     }
   }
 
-  const editProductForm = formMaker(editProduct)
+  // rendered forms
+  const editProductForm = formMaker(editProduct) //edit/delete buttons
+  const editItemForm = formMaker(itemMapped) //dont think this is the best way
+
   const getProductsForm = formMaker(getProducts)
 
   let mapItems = () =>
     items.map(item => (
       <div key={item._id}>
-        Product id {item._id}: {item.brand} {item.productTitle}
-        <br/>
-        <button onClick={e => handleEdit(item._id)}>Edit</button>
-        <button onClick={e => handleDelete(e, item._id)}>Delete</button>
-        {editItem === item._id ? editProductForm : null}
+        Product id {/*item._id*/}: {item.brand} {item.productTitle}
+        <br />
+        {editItem === item._id ? (
+          <div>
+            {' '}
+           {editItemForm}  {/* inputs */}
+            <hr /> 
+            {editProductForm}  {/* edit/delete buttons*/}
+            {' '}
+          </div>
+        ) : (
+          <div>
+            <button onClick={e => handleEdit(item._id)}>Edit</button>
+            <button onClick={e => handleDelete(e, item._id)}>Delete</button>
+          </div>
+        )}
       </div>
     ))
 
