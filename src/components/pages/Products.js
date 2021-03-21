@@ -33,39 +33,39 @@ let myProductBody = {
   },
   distributors: ['US Elite']
 }
-let myOtherProductBody = {
-  brand: "Arc'teryx",
-  sku: '7188',
-  productTitle: 'H150 Riggers Belt',
-  pricing: {
-    wholesale: 64.5,
-    map: 103.2,
-    msrp: 129.0
-  },
-  countryOfOrigin: 'Canada',
-  options: {
-    colors: ['Coyote', 'Multicam'],
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL'],
-    otherOptions: []
-  },
-  unitOfMeasure: 'EA',
-  productLinks: [],
-  shippingDIMs: {
-    weigth: '',
-    lenght: '',
-    width: '',
-    height: ''
-  },
-  gsa: {
-    listed: true,
-    price: 102.43
-  },
-  distributors: ['US Elite']
-}
+// let myOtherProductBody = {
+//   brand: "Arc'teryx",
+//   sku: '7188',
+//   productTitle: 'H150 Riggers Belt',
+//   pricing: {
+//     wholesale: 64.5,
+//     map: 103.2,
+//     msrp: 129.0
+//   },
+//   countryOfOrigin: 'Canada',
+//   options: {
+//     colors: ['Coyote', 'Multicam'],
+//     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'XXXXL'],
+//     otherOptions: []
+//   },
+//   unitOfMeasure: 'EA',
+//   productLinks: [],
+//   shippingDIMs: {
+//     weigth: '',
+//     lenght: '',
+//     width: '',
+//     height: ''
+//   },
+//   gsa: {
+//     listed: true,
+//     price: 102.43
+//   },
+//   distributors: ['US Elite']
+// }
 
 export default function Products () {
   const [items, setItems] = useState([])
-  const [formItem, setFormItem] = useState({}) //use myProductBody for quick create
+  const [formItem, setFormItem] = useState(myProductBody) //use myProductBody for quick create
   const [editItem, setEditItem] = useState(null) // this is just the id for the item selected to be edited
   const [itemMapped, setItemMapped] = useState({})
 
@@ -125,13 +125,13 @@ export default function Products () {
     setFormItem({...formItem, [name]: value})
   }
 
-  let editItemMap = editItemId => {
-    let itemMap = items.filter(item => item._id === editItemId)[0]
-    console.log(`itemMap`, itemMap)
-    setFormItem(itemMap)
+  let editItemMap = item => {
+    // let itemMap = items.filter(item => item._id === editItemId)[0]
+    console.log(`itemMap`, item)
+    // setFormItem(item)
     let mappingItem = {}
-    for (const property in itemMap) {
-      console.log(`${property}: ${itemMap[property]}`)
+    for (const property in item) {
+      console.log(`${property}: ${item[property]}`)
       mappingItem = {
         ...mappingItem,
         [property]: {
@@ -140,24 +140,26 @@ export default function Products () {
             content: `${property}`
           },
           input: {
-            attributes: {name: `${property}`, placeholder: `${itemMap[property]}`, onChange: (e)=>onEdit(e) },
+            attributes: {name: `${property}`, placeholder: `${item[property]}`, onChange: (e)=>onEdit(e) },
             content: ''
           }
         }
       }
 
-      if (typeof itemMap[property] === 'object') {
+      if (typeof item[property] === 'object') {
         console.log('*** we have an object', mappingItem)
       }
     }
     return setItemMapped(mappingItem) //comment out
   }
 
-  let handleEdit = id => {
-    console.log(`setEditItem ${id}`)
-    setEditItem(id)
+  let handleEdit = item => {
+    console.log(`setEditItem ${item._id}`)
+    setEditItem(item._id)
     // add item edit form
-    editItemMap(id)
+    editItemMap(item)
+    setFormItem(item)
+
   }
 
   //form objects
@@ -227,7 +229,9 @@ export default function Products () {
   let mapItems = () =>
     items.map(item => (
       <div key={item._id}>
-        Product id {/*item._id*/}: {item.brand} {item.productTitle}
+       Product id: {item._id}
+       <br/>
+        {item.brand} {item.productTitle}
         <br />
         {editItem === item._id ? (
           <div>
@@ -239,7 +243,7 @@ export default function Products () {
           </div>
         ) : (
           <div>
-            <button onClick={e => handleEdit(item._id)}>Edit</button>
+            <button onClick={e => handleEdit(item)}>Edit</button>
             <button onClick={e => handleDelete(e, item._id)}>Delete</button>
           </div>
         )}
