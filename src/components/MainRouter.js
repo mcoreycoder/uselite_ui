@@ -6,15 +6,17 @@ import Order from './pages/Order'
 import Controler from './pages/Controler'
 import Products from './pages/Products'
 import Brands from './pages/Brands'
-import GSA from './pages/GSAitems'
-import Arcteryx from './pages/Arcteryx'
+import GSA from './pages/gsa/GSAitems'
+import Arcteryx from './pages/arcteryx/Arcteryx'
+import MainRouterMenu from './MainRouterMenu'
 
 export default function MainRouter () {
   return (
     <div>
       <Router>
         <nav>
-          <Link to='/'>Home</Link>
+          <MainRouterMenu/>
+          {/* <Link to='/'>Home</Link>
           <br />
           <Link to='/rfq'>RFQ</Link>
           <br />
@@ -28,7 +30,7 @@ export default function MainRouter () {
           <br />
           <Link to='/gsa'>GSA</Link>
           <br />
-          <Link to='/arcteryx'>Arc'teryx</Link>
+          <Link to='/arcteryx'>Arc'teryx</Link> */}
 
           {/* <Link to="/">Home</Link> */}
         </nav>
