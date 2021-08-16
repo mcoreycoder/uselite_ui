@@ -23,6 +23,10 @@ export default function MenuPopupState () {
             </MenuItem>
 
             <MenuItem onClick={popupState.close}>
+              <Link to='/pricelists'>Price Lists</Link>
+            </MenuItem>
+
+            <MenuItem onClick={popupState.close}>
               <Link to='/arcteryx'>Arc'teryx</Link>
             </MenuItem>
 

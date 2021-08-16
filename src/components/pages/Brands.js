@@ -30,7 +30,7 @@ export default function Brands () {
     //   )}
     // </div>
     <div>
-        Vendor {i}: {brand[0]}
+        Vendor {i}: {brand.Brand}
         <br/>
         {/* Brand: {brand[1]} */}
         <hr/>

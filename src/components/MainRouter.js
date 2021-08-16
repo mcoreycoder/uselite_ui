@@ -8,6 +8,7 @@ import Products from './pages/Products'
 import Brands from './pages/Brands'
 import GSA from './pages/gsa/GSAitems'
 import Arcteryx from './pages/arcteryx/Arcteryx'
+import PriceLists from './pages/priceLists/PriceLists'
 import MainRouterMenu from './MainRouterMenu'
 
 export default function MainRouter () {
@@ -43,6 +44,7 @@ export default function MainRouter () {
           <Route path='/brands' component={Brands} />
           <Route path='/gsa' component={GSA} />
           <Route path='/arcteryx' component={Arcteryx} />
+          <Route path='/pricelists' component={PriceLists} />
 
           {/* <Route path="/" component={}/> */}
 

@@ -36,7 +36,7 @@ export default async function apiCaller (routeInput) {
     }
   }
   await console.log(
-    `apiCaller() \n`,
+    `apiCaller() data: \n`,
     data
   )
   // await console.log(
@@ -54,12 +54,12 @@ export default async function apiCaller (routeInput) {
     .then(res => res.json())
     // below is just for checking res data
     .then(data => {
-      console.log(`res data is array?: ${Array.isArray(data)}`)
-      !Array.isArray(data)
-        ? console.log(`apiCaller() - Object res data: ${Object.entries(data)}`)
-        : data.map(obj =>
-            console.log(`apiCaller() - Array res data ${obj._id}`)
-          )
+      // console.log(`res data is array?: ${Array.isArray(data)}`)
+      // !Array.isArray(data)
+      //   ? console.log(`apiCaller() - Object res data: ${Object.entries(data)}`)
+      //   : data.map(obj =>
+      //       console.log(`apiCaller() - Array res data ${obj._id}`)
+      //     )
       return data
     })
 

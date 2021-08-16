@@ -49,12 +49,12 @@ console.log('tileData', tileData)
 
 let gridMap = tileData.map((tile,i) => (
   <GridListTile key={i}>
-    <img src={tile[9]} alt={tile[2]} style={{width: '85%', height: '85%', position: 'center'}}/>
+    <img src={tile.img_src} alt={tile.title} style={{width: '85%', height: '85%', position: 'center'}}/>
     <GridListTileBar
-      title={tile[2]}
-      subtitle={<span>Price: {tile[4]} <br/> Sizes: {tile[5]} <br/>Category: {tile[0]} <br/> Weight: {tile[6]}</span>}
+      title={tile.title}
+      subtitle={<span>Price: {tile.msrp} <br/> Sizes: {tile.Sizes} <br/>Category: {tile.category} <br/> Weight: {tile.Weight}</span>}
       actionIcon={
-        <IconButton aria-label={`info about ${tile[2]}`} className={classes.icon} onClick={()=>console.log(`hovered on ${tile[2]}`)}>
+        <IconButton aria-label={`info about ${tile.title}`} className={classes.icon} onClick={()=>console.log(`hovered on ${tile.title}`)}>
           <InfoIcon/>
         </IconButton>
       }
