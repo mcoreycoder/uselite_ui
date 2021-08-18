@@ -9,38 +9,82 @@ let getProductVariantData = () =>
   apiCaller({ route: `/sheets/variants`, method: `GET` })
 
 export default function PriceLists () {
-  const [priceLists, setPriceLists] = useState(['Test'])
-  const [productList, setProducts] = useState(['Test'])
+  const [priceLists, setPriceLists] = useState(['priceLists'])
 
-  const [selectedPriceLists, setSelectedPriceLists] = useState([`Test`])
-  const [showBrands, setShowBrands] = useState([`Test`])
-
-  const [selectedProduct, setProduct] = useState(['Test'])
-  const [optionList, setItem] = useState(['Test'])
+  const [selectedLists, setSelectedLists] = useState([`selectedLists`])
+  
+  let isBrandSelected = (brand)=> selectedLists.find(el => el.brand === brand)
 
   let addSelectedPriceList = brand => {
-    let updateList =
-      selectedPriceLists[0] === `Test`
-        ? [brand]
-        : [...selectedPriceLists, brand]
-    setSelectedPriceLists(updateList)
+    if (isBrandSelected(brand) === undefined) {
+      console.log(`addSelectedPriceList: adding ${brand} to selectedLists`)
+      let addBrand = {
+        brand: brand,
+        displayProducts: false,
+        hasProducts: ['empty']
+      }
+      let updateList =
+        selectedLists[0] === `selectedLists`
+          ? [addBrand]
+          : [...selectedLists, addBrand]
+      setSelectedLists(updateList)
+    }
+    console.log(`addSelectedPriceList: ${brand} is in selectedLists`)
   }
 
   let clearSelectedPriceList = brand => {
-    let update = [`Test`]
-    setSelectedPriceLists(update)
-    setProducts(update)
-    setShowBrands(update)
+    return setSelectedLists(['selectedLists'])
   }
 
   let sendPriceListSelections = async selectedBrands => {
+    let updateLists = selectedLists
 
-    await getProductData(selectedBrands).then(res => {
-      let addNewProductList = [...productList, ...res]
-      productList[0] === 'Test'
-        ? setProducts(res)
-        : setProducts(addNewProductList)
-    }).then( res => setShowBrands([...selectedBrands]))
+    // selectedBrands.forEach(selectedBrand =>
+    //   console.log(`sendPriceListSelections selectedBrand: ${selectedBrand.brand}`)
+    // )
+    for (let i = 0; i < selectedBrands.length; i++) {
+      // console.log(
+      //   `sendPriceListSelections for() selectedBrands[i].hasProducts: ${selectedBrands[i].hasProducts[0]}`
+      // )
+      if (selectedBrands[i].hasProducts[0] === 'empty') {
+        let updateIndex = updateLists.indexOf(selectedBrands[i])
+        // console.log(`sendPriceListSelections updateIndex: ${updateIndex}`)
+        // console.log(`sendPriceListSelections getting: ${selectedBrands[i].brand}`)
+        await getProductData(selectedBrands[i].brand).then(res => {
+          updateLists[updateIndex].hasProducts = [...res]
+          updateLists[updateIndex].displayProducts = true
+        })
+      }
+    }
+    // selectedBrands.forEach(selectedBrand =>
+    //   console.log(
+    //     `sendPriceListSelections: ${selectedBrand.brand} hasProducts: , ${selectedBrand.hasProducts[0].price_product_name}`
+    //   ))
+    setSelectedLists([]) //have to clear state and reload to prompt rerender since it is a property of an object being updated but the list itself is unchanged
+    return setSelectedLists(updateLists)
+  }
+
+  let displayBrand = brandObj => {
+    console.log(`displayBrand view/hide button clicked on Brand: ${brandObj.brand}`)
+    let hasProductsListed = isBrandSelected(brandObj.brand)
+    // console.log(`view/hide isBrandSelected: ${isBrandSelected(brandObj.brand)}`)
+
+    if (hasProductsListed.hasProducts[0] === 'empty') {
+      console.log(`displayBrand view/hide button IF hasProductsListed.hasProducts[0]: ${hasProductsListed.hasProducts[0]}`)
+      return sendPriceListSelections([brandObj])
+    }else{
+      let updateLists = selectedLists.map(el => {
+        if (el.brand === brandObj.brand){
+          el.displayProducts = !el.displayProducts
+        }
+        return el
+      })
+      updateLists.forEach(el =>
+        console.log(`displayBrand updateLists el.brand: ${el.brand} , el.displayProducts: ${el.displayProducts}`)
+      )
+      return setSelectedLists(updateLists)
+    }
+    
   }
 
   let mapPriceLists = arr => {
@@ -50,8 +94,6 @@ export default function PriceLists () {
           <button
             onClick={e => {
               e.preventDefault()
-              // console.log(`selectedPriceLists is: ${selectedPriceLists}`)
-              // console.log(`adding to list: ${brand.brand}`)
               addSelectedPriceList(brand.brand)
             }}
           >
@@ -64,45 +106,20 @@ export default function PriceLists () {
     return brandsMapped
   }
 
-  let hideSelectedPriceList = brand => {
-    console.log(`67 hideSelectedPriceList 'brand': ${brand}`)
-    console.log(`68 productList.find(el => el.brand === brand)': ${productList.find(el => el.brand === brand)}`)
-    let foundBrandinProductList =
-      productList[0] === `Test`
-        ? [{ brand: `Test` }]
-        : productList.find(el => el.brand === brand) !== undefined ? productList.find(el => el.brand === brand) : [{ brand: `Test` }]
-    console.log(
-      `line 73 foundBrandinProductList:${foundBrandinProductList.brand}`
-    )
-    if (brand === showBrands.find(el => el === brand)) {
-      console.log(
-        `'hide items' button clicked: productList.find(el => el.brand === brand): ${foundBrandinProductList.brand}`
-      )
-      // if button shows 'hide items'
-      setShowBrands(showBrands.filter(el => el !== brand))
-    } else {
-      // if button shows 'view items'
-      brand === foundBrandinProductList.brand
-        ? setShowBrands([...showBrands, brand])
-        : sendPriceListSelections(brand).then(res =>
-            setShowBrands([...showBrands, brand])
-          )
-    }
-  }
   let mapSelectionLists = arr => {
-    let brandsMapped = arr.map((brand, i) => {
+    let brandsMapped = arr.map((brandObj, i) => {
       return (
         <div key={i}>
-          {brand}
+          {brandObj.brand}
           <button
             onClick={e => {
               e.preventDefault()
-              hideSelectedPriceList(brand)
+              displayBrand(brandObj)
             }}
           >
-            {selectedPriceLists[0] === 'Test'
+            {selectedLists[0] === 'selectedLists'
               ? null
-              : brand === showBrands.find(el => el === brand)
+              : brandObj.displayProducts === true
               ? `Hide Items`
               : `View Items`}
           </button>
@@ -114,33 +131,31 @@ export default function PriceLists () {
   }
 
   let mapProductList = arr => {
-    let ProductsMapped = arr.map((product, i) => {
-      return (
-        <div key={i}>
-          <p
-            onClick={() => {
-              console.log(
-                `${product.price_parent_sku} ${product.price_product_name}`
-              )
-              // getProductVariantData(product).then(res => setItem(res))
-            }}
-          >{`${product.price_parent_sku} ${product.price_product_name}`}</p>
-        </div>
-      )
+    let brandsMapped = arr.map((brandObj, i) => {
+      if (brandObj.displayProducts === true) {
+        let productArr = brandObj.hasProducts.map((product,j) => {
+          return (
+            <div key={j}>
+              <p
+                onClick={() => {
+                  console.log(
+                    `${product.price_parent_sku} ${product.price_product_name}`
+                  )
+                  // getProductVariantData(product).then(res => setItem(res))
+                }}
+              >{`${product.price_parent_sku} ${product.price_product_name}`}</p>
+            </div>
+          )
+        })
+        return productArr
+      }
     })
-
-    return ProductsMapped
+    return brandsMapped
   }
 
   let displayPriceList = mapPriceLists(priceLists)
-  let displaySelectedPriceList = mapSelectionLists(selectedPriceLists)
-
-  // let displayProductList = mapProductList(productList.filter(item => item.brand === "Arc'teryx")) //works
-  let displayProductList = mapProductList(
-    productList.filter(
-      item => item.brand === showBrands.find(brand => brand === item.brand)
-    )
-  ) //seems to work
+  let displaySelectedPriceList = mapSelectionLists(selectedLists)
+  let displayProductList = mapProductList(selectedLists)
 
   useEffect(() => {
     let mounted = true
@@ -166,15 +181,15 @@ export default function PriceLists () {
         Price Lists
       </h2>
       <div>
-        {selectedPriceLists[0] === 'Test' ? null : (
+        {selectedLists[0] === 'selectedLists' ? null : (
           <div>
             Selected:
             {displaySelectedPriceList}
             <button
               onClick={e => {
                 e.preventDefault()
-                console.log(`Submitting brands : ${selectedPriceLists}`)
-                  sendPriceListSelections(selectedPriceLists)
+                // console.log(`Submitting brands : ${selectedLists}`)
+                sendPriceListSelections(selectedLists)
               }}
             >
               Submit List
@@ -190,16 +205,17 @@ export default function PriceLists () {
           </div>
         )}
       </div>
-      {/* <p>
-        {selectedProduct[0] === 'Test'
-          ? null
-          : `${selectedProduct[0].upc_parent_sku} ${selectedProduct[0].upc_productname}`}
-      </p> */}
       <hr />
-      Select Price Lists
-      {displayPriceList}
-      <hr />
-      {productList[0] === 'Test' ? null : displayProductList}
+
+      {priceLists[0] === 'priceLists' ? null : (
+        <div>
+          Select Price Lists
+          {displayPriceList}
+          <hr />
+        </div>
+      )}
+
+      {displayProductList}
     </div>
   )
 }
