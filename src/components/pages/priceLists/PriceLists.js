@@ -208,12 +208,12 @@ export default function PriceLists () {
 
   useEffect(() => {
     let mounted = true
-    // // implement to make call and get price list when component is rendering
-    // getPriceLists().then(response => {
-    //   if (mounted) {
-    //     setPriceLists(response)
-    //   }
-    // })
+    // implement to make call and get price list when component is rendering
+    getPriceLists().then(response => {
+      if (mounted) {
+        setPriceLists(response)
+      }
+    })
     return () => (mounted = false)
   }, [])
 
