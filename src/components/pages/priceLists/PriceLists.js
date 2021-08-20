@@ -12,12 +12,12 @@ export default function PriceLists () {
   const [priceLists, setPriceLists] = useState(['priceLists'])
 
   const [selectedLists, setSelectedLists] = useState([`selectedLists`])
-  
-  let isBrandSelected = (brand)=> selectedLists.find(el => el.brand === brand)
+
+  let isBrandSelected = brand => selectedLists.find(el => el.brand === brand)
 
   let addSelectedPriceList = brand => {
     if (isBrandSelected(brand) === undefined) {
-      console.log(`addSelectedPriceList: adding ${brand} to selectedLists`)
+      // console.log(`addSelectedPriceList: adding ${brand} to selectedLists`)
       let addBrand = {
         brand: brand,
         displayProducts: false,
@@ -29,11 +29,14 @@ export default function PriceLists () {
           : [...selectedLists, addBrand]
       setSelectedLists(updateList)
     }
-    console.log(`addSelectedPriceList: ${brand} is in selectedLists`)
+    // console.log(`addSelectedPriceList: ${brand} is in selectedLists`)
   }
 
   let clearSelectedPriceList = brand => {
-    return setSelectedLists(['selectedLists'])
+    if (brand === `clearAll` || selectedLists.length === 1) {
+      return setSelectedLists(['selectedLists'])
+    }
+    return setSelectedLists(selectedLists.filter(el => el.brand !== brand))
   }
 
   let sendPriceListSelections = async selectedBrands => {
@@ -65,26 +68,42 @@ export default function PriceLists () {
   }
 
   let displayBrand = brandObj => {
-    console.log(`displayBrand view/hide button clicked on Brand: ${brandObj.brand}`)
+    // console.log(
+    //   `displayBrand view/hide button clicked on Brand: ${brandObj.brand}`
+    // )
     let hasProductsListed = isBrandSelected(brandObj.brand)
     // console.log(`view/hide isBrandSelected: ${isBrandSelected(brandObj.brand)}`)
 
     if (hasProductsListed.hasProducts[0] === 'empty') {
-      console.log(`displayBrand view/hide button IF hasProductsListed.hasProducts[0]: ${hasProductsListed.hasProducts[0]}`)
+      // console.log(
+      //   `displayBrand view/hide button IF hasProductsListed.hasProducts[0]: ${hasProductsListed.hasProducts[0]}`
+      // )
       return sendPriceListSelections([brandObj])
-    }else{
+    } else {
       let updateLists = selectedLists.map(el => {
-        if (el.brand === brandObj.brand){
+        if (el.brand === brandObj.brand) {
           el.displayProducts = !el.displayProducts
         }
         return el
       })
-      updateLists.forEach(el =>
-        console.log(`displayBrand updateLists el.brand: ${el.brand} , el.displayProducts: ${el.displayProducts}`)
-      )
+      // updateLists.forEach(el =>
+      //   console.log(
+      //     `displayBrand updateLists el.brand: ${el.brand} , el.displayProducts: ${el.displayProducts}`
+      //   )
+      // )
       return setSelectedLists(updateLists)
     }
-    
+  }
+
+  let mapProductVariantData = variants => {
+    let variantList = variants.map((option, i) => {
+      return (
+        <div key={i}>
+          {option.upc_variant_sku} {option.upc_color} {option.upc_size}
+        </div>
+      )
+    })
+    return variantList
   }
 
   let mapPriceLists = arr => {
@@ -123,6 +142,14 @@ export default function PriceLists () {
               ? `Hide Items`
               : `View Items`}
           </button>
+          <button
+            onClick={e => {
+              e.preventDefault()
+              clearSelectedPriceList(brandObj.brand)
+            }}
+          >
+            Remove
+          </button>
         </div>
       )
     })
@@ -130,20 +157,42 @@ export default function PriceLists () {
     return brandsMapped
   }
 
+  let updateSelectedItem = (product, productIndex, brandIndex) => {
+    product.displayVariants = !product.displayVariants
+    let updateSelectedLists = [...selectedLists]
+    let productArr = selectedLists[brandIndex].hasProducts
+    productArr[productIndex] = product
+    updateSelectedLists[brandIndex].hasProducts = productArr
+    return setSelectedLists([...updateSelectedLists])
+  }
+
   let mapProductList = arr => {
     let brandsMapped = arr.map((brandObj, i) => {
       if (brandObj.displayProducts === true) {
-        let productArr = brandObj.hasProducts.map((product,j) => {
+        let productArr = brandObj.hasProducts.map((product, j) => {
+          if (product.displayVariants === undefined) {
+            product.displayVariants = false
+          }
+
+          let displayProductVariantData = mapProductVariantData(
+            product.variants
+          )
+
           return (
             <div key={j}>
-              <p
-                onClick={() => {
-                  console.log(
-                    `${product.price_parent_sku} ${product.price_product_name}`
-                  )
-                  // getProductVariantData(product).then(res => setItem(res))
+              <button
+                onClick={e => {
+                  e.preventDefault()
+                  // console.log(
+                  //   `You selected: ${product.price_parent_sku} ${product.price_product_name} , product.displayVariants: ${product.displayVariants}`
+                  // )
+                  updateSelectedItem(product, j, i)
                 }}
-              >{`${product.price_parent_sku} ${product.price_product_name}`}</p>
+              >{`${product.price_parent_sku} ${product.price_product_name}`}</button>
+              {product.displayVariants === false
+                ? null
+                : displayProductVariantData}
+              {/* {mapProductVariantData(product.variants)} */}
             </div>
           )
         })
