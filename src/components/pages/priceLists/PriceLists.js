@@ -32,6 +32,22 @@ export default function PriceLists () {
     // console.log(`addSelectedPriceList: ${brand} is in selectedLists`)
   }
 
+  let selectAllLists = (e) => {
+    e.preventDefault()
+    let updateList = []
+    for(let i =0; i<priceLists.length; i++){
+      console.log(`selectAllLists priceLists[i].brand, ${priceLists[i].brand}`)
+      if (isBrandSelected(priceLists[i].brand) === undefined) {
+        let addBrand = {
+          brand: priceLists[i].brand,
+          displayProducts: false,
+          hasProducts: ['empty']
+        }
+         updateList = [...updateList, addBrand]
+        setSelectedLists([...updateList])
+      }    }
+  }
+
   let clearSelectedPriceList = brand => {
     if (brand === `clearAll` || selectedLists.length === 1) {
       return setSelectedLists(['selectedLists'])
@@ -258,7 +274,7 @@ export default function PriceLists () {
 
       {priceLists[0] === 'priceLists' ? null : (
         <div>
-          Select Price Lists
+          Select Price Lists <button onClick={e=> selectAllLists(e)}>Select All</button>
           {displayPriceList}
           <hr />
         </div>
