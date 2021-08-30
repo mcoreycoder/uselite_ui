@@ -8,7 +8,7 @@ let getProductData = brandsArr =>
 let getProductVariantData = () =>
   apiCaller({ route: `/sheets/variants`, method: `GET` })
 
-export default function PriceLists () {
+export default function PriceLists (props) {
   const [priceLists, setPriceLists] = useState(['priceLists'])
 
   const [selectedLists, setSelectedLists] = useState([`selectedLists`])
@@ -32,20 +32,20 @@ export default function PriceLists () {
     // console.log(`addSelectedPriceList: ${brand} is in selectedLists`)
   }
 
-  let selectAllLists = (e) => {
+  let selectAllLists = e => {
     e.preventDefault()
     let updateList = []
-    for(let i =0; i<priceLists.length; i++){
-      console.log(`selectAllLists priceLists[i].brand, ${priceLists[i].brand}`)
+    for (let i = 0; i < priceLists.length; i++) {
       if (isBrandSelected(priceLists[i].brand) === undefined) {
         let addBrand = {
           brand: priceLists[i].brand,
           displayProducts: false,
           hasProducts: ['empty']
         }
-         updateList = [...updateList, addBrand]
+        updateList = [...updateList, addBrand]
         setSelectedLists([...updateList])
-      }    }
+      }
+    }
   }
 
   let clearSelectedPriceList = brand => {
@@ -113,9 +113,17 @@ export default function PriceLists () {
 
   let mapProductVariantData = variants => {
     let variantList = variants.map((option, i) => {
+let inCart = () => {
+  let isInCart = props.cartItems.find(el=> el.upc_variant_sku === option.upc_variant_sku)
+  return isInCart === undefined ? `Add to Cart` : 'Remove'
+}
       return (
         <div key={i}>
           {option.upc_variant_sku} {option.upc_color} {option.upc_size}
+          <button onClick={e=> {
+            e.preventDefault()
+            props.addToCart(option)
+            }}>{inCart()}</button>
         </div>
       )
     })
@@ -274,7 +282,8 @@ export default function PriceLists () {
 
       {priceLists[0] === 'priceLists' ? null : (
         <div>
-          Select Price Lists <button onClick={e=> selectAllLists(e)}>Select All</button>
+          Select Price Lists{' '}
+          <button onClick={e => selectAllLists(e)}>Select All</button>
           {displayPriceList}
           <hr />
         </div>
