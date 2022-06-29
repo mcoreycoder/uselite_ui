@@ -1,6 +1,6 @@
 import React from 'react'
-import formMaker from '../functions/formMaker'
-import apiCaller from '../functions/apiCaller'
+import formMaker from '../functionsOld/formMaker'
+import apiCaller from '../functionsOld/apiCaller'
 
 
 const orderRequestForm = {
@@ -10,8 +10,8 @@ const orderRequestForm = {
       content: 'RFQ#:'
     },
     input: {
-      attributes: { className: 'className' },
-      content: ''
+      attributes: { className: 'className', placeholder: 'RFQ' },
+      content: 'test'
     }
   },
   email: {

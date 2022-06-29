@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import formMaker from '../functions/formMaker'
-import apiCaller from '../functions/apiCaller'
+import formMaker from '../functionsOld/formMaker'
+import apiCaller from '../functionsOld/apiCaller'
 
 let myProductBody = {
   brand: "Arc'teryx",

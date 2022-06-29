@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import apiCaller from '../../functions/apiCaller'
+import apiCaller from '../../functionsOld/apiCaller'
 
 let getPriceLists = () =>
   apiCaller({ route: `/sheets/pricelists`, method: `GET` })
@@ -34,7 +34,8 @@ export default function PriceLists (props) {
 
   let selectAllLists = e => {
     e.preventDefault()
-    let updateList = []
+    let updateList =
+      selectedLists[0] === `selectedLists` ? [] : [...selectedLists]
     for (let i = 0; i < priceLists.length; i++) {
       if (isBrandSelected(priceLists[i].brand) === undefined) {
         let addBrand = {
@@ -43,9 +44,9 @@ export default function PriceLists (props) {
           hasProducts: ['empty']
         }
         updateList = [...updateList, addBrand]
-        setSelectedLists([...updateList])
       }
     }
+    return setSelectedLists([...updateList])
   }
 
   let clearSelectedPriceList = brand => {
@@ -113,17 +114,21 @@ export default function PriceLists (props) {
 
   let mapProductVariantData = variants => {
     let variantList = variants.map((option, i) => {
-let inCart = () => {
-  let isInCart = props.cartItems.find(el=> el.upc_variant_sku === option.upc_variant_sku)
-  return isInCart === undefined ? `Add to Cart` : 'Remove'
-}
+      let inCart = () => {
+        let isInCart = props.cartItems?.find(el => el.fullSKU === option.fullSKU)
+        return isInCart === undefined ? `Add to Cart` : 'Remove'
+      }
       return (
         <div key={i}>
-          {option.upc_variant_sku} {option.upc_color} {option.upc_size}
-          <button onClick={e=> {
-            e.preventDefault()
-            props.addToCart(option)
-            }}>{inCart()}</button>
+          {option.fullSKU} - {option.upc_color} {option.upc_size}
+          <button
+            onClick={e => {
+              e.preventDefault()
+              props.addToCart(option)
+            }}
+          >
+            {inCart()}
+          </button>
         </div>
       )
     })

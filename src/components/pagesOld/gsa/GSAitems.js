@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 // import formMaker from '../functions/formMaker'
-import apiCaller from '../../functions/apiCaller'
+import apiCaller from '../../functionsOld/apiCaller'
 import GSA_TABLE from './GSA_Table'
 
 let getGSAitems = () => apiCaller({ route: `/sheets/gsa`, method: `GET` })

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import formMaker from '../functions/formMaker'
-import apiCaller from '../functions/apiCaller'
+import formMaker from '../functionsOld/formMaker'
+import apiCaller from '../functionsOld/apiCaller'
 
 export default function Controler () {
   const [deleteInput, setDeleteInput] = useState(``)
